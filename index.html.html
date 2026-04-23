@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRC Exam Prep — Complete Study Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b27;
+    --surface2: #1e2535;
+    --surface3: #252d40;
+    --border: #2a3347;
+    --accent: #4f8ef7;
+    --accent2: #7c5cf7;
+    --green: #34d399;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --font-head: 'Playfair Display', serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --radius: 12px;
+    --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+
+  /* NAV */
+  .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 8px; position: sticky; top: 0; z-index: 100; height: 60px; flex-wrap: wrap; }
+  .nav-logo { font-family: var(--font-head); font-size: 1.1rem; color: var(--accent); margin-right: 12px; white-space: nowrap; }
+  .nav-btn { background: none; border: none; color: var(--text2); font-family: var(--font-body); font-size: 0.8rem; font-weight: 500; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: var(--transition); white-space: nowrap; letter-spacing: 0.03em; text-transform: uppercase; }
+  .nav-btn:hover { background: var(--surface3); color: var(--text); }
+  .nav-btn.active { background: var(--accent); color: #fff; }
+
+  /* PAGES */
+  .page { display: none; padding: 28px 24px; max-width: 960px; margin: 0 auto; }
+  .page.active { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+
+  /* HEADINGS */
+  h1 { font-family: var(--font-head); font-size: 2rem; color: var(--text); margin-bottom: 8px; }
+  h2 { font-family: var(--font-head); font-size: 1.35rem; color: var(--text); margin-bottom: 16px; }
+  h3 { font-size: 0.95rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; }
+  .subtitle { color: var(--text2); font-size: 0.95rem; margin-bottom: 28px; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .card:hover { border-color: var(--accent); transition: var(--transition); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+
+  /* DOMAIN CARDS (Study Guide) */
+  .domain-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; }
+  .domain-num { background: var(--accent); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  .domain-title { font-weight: 600; font-size: 1rem; flex: 1; }
+  .domain-chevron { color: var(--text3); transition: var(--transition); font-size: 1rem; }
+  .domain-body { display: none; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
+  .domain-body.open { display: block; }
+  .domain-chevron.open { transform: rotate(180deg); color: var(--accent); }
+  .topic-list { list-style: none; }
+  .topic-list li { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); display: flex; gap: 8px; }
+  .topic-list li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+  .topic-list li strong { color: var(--text); }
+  .tag { display: inline-block; background: var(--surface3); color: var(--accent); font-size: 0.72rem; padding: 2px 8px; border-radius: 99px; margin: 2px; font-family: var(--font-mono); }
+
+  /* FLASHCARDS */
+  .fc-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .fc-deck-select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; }
+  .fc-counter { color: var(--text2); font-size: 0.88rem; font-family: var(--font-mono); margin-left: auto; }
+  .flashcard-wrap { perspective: 1000px; margin: 0 auto 20px; max-width: 620px; height: 320px; cursor: pointer; }
+  .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--radius); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 28px; text-align: center; border: 2px solid var(--border); }
+  .fc-front { background: var(--surface); }
+  .fc-back { background: var(--surface2); border-color: var(--accent); transform: rotateY(180deg); }
+  .fc-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 16px; font-family: var(--font-mono); }
+  .fc-content { font-size: 1.05rem; line-height: 1.6; color: var(--text); }
+  .fc-back .fc-content { font-size: 0.95rem; color: var(--text2); }
+  .fc-hint { font-size: 0.78rem; color: var(--text3); margin-top: 16px; }
+  .fc-nav { display: flex; justify-content: center; gap: 12px; align-items: center; }
+  .btn { background: var(--accent); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+  .btn:hover { opacity: 0.85; }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+  .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.green { background: var(--green); color: #0a0a0a; }
+  .btn.red { background: var(--red); color: #fff; }
+  .btn.sm { padding: 6px 14px; font-size: 0.82rem; }
+  .progress-bar-wrap { background: var(--surface3); border-radius: 99px; height: 6px; margin-bottom: 8px; }
+  .progress-bar { background: var(--accent); height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+
+  /* QUIZ */
+  .quiz-meta { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+  .quiz-stat { text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; }
+  .quiz-stat .val { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+  .quiz-stat .lbl { font-size: 0.72rem; text-transform: uppercase; color: var(--text3); letter-spacing: 0.08em; margin-top: 2px; }
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+  .q-text { font-size: 1rem; line-height: 1.7; color: var(--text); margin-bottom: 20px; }
+  .q-options { display: flex; flex-direction: column; gap: 10px; }
+  .q-option { background: var(--surface2); border: 2px solid var(--border); border-radius: 8px; padding: 12px 16px; cursor: pointer; transition: var(--transition); font-size: 0.9rem; color: var(--text2); display: flex; gap: 12px; align-items: flex-start; }
+  .q-option:hover:not(.disabled) { border-color: var(--accent); color: var(--text); }
+  .q-option.selected { border-color: var(--accent); color: var(--text); background: rgba(79,142,247,0.08); }
+  .q-option.correct { border-color: var(--green); color: var(--green); background: rgba(52,211,153,0.08); }
+  .q-option.wrong { border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.08); }
+  .q-option .opt-key { font-family: var(--font-mono); font-weight: 700; flex-shrink: 0; width: 20px; }
+  .q-explanation { background: var(--surface3); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 16px; font-size: 0.88rem; color: var(--text2); line-height: 1.6; margin-top: 16px; display: none; }
+  .q-explanation.show { display: block; }
+  .q-domain-tag { font-size: 0.72rem; background: var(--surface3); color: var(--accent2); padding: 3px 10px; border-radius: 99px; font-family: var(--font-mono); margin-bottom: 12px; display: inline-block; }
+  .quiz-result { text-align: center; padding: 40px 20px; }
+  .result-score { font-family: var(--font-head); font-size: 4rem; color: var(--accent); }
+  .result-msg { font-size: 1.1rem; color: var(--text2); margin: 12px 0 28px; }
+
+  /* MOCK EXAM */
+  .exam-header { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; }
+  .timer { font-family: var(--font-mono); font-size: 1.3rem; color: var(--yellow); }
+  .timer.warning { color: var(--red); animation: blink 1s step-start infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .exam-grid { display: grid; grid-template-columns: 1fr 200px; gap: 20px; }
+  @media (max-width: 680px) { .exam-grid { grid-template-columns: 1fr; } }
+  .q-nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .q-nav-btn { background: var(--surface3); border: 1px solid var(--border); color: var(--text3); border-radius: 6px; padding: 6px; font-size: 0.75rem; font-family: var(--font-mono); cursor: pointer; text-align: center; transition: var(--transition); }
+  .q-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .q-nav-btn.answered { background: rgba(79,142,247,0.2); border-color: var(--accent); color: var(--accent); }
+  .q-nav-btn.current { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* HOME */
+  .home-hero { text-align: center; padding: 40px 0 32px; }
+  .home-hero h1 { font-size: 2.4rem; margin-bottom: 10px; }
+  .home-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 28px 0; }
+  .home-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
+  .home-stat .n { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .home-stat .l { font-size: 0.78rem; text-transform: uppercase; color: var(--text3); letter-spacing: 0.08em; margin-top: 4px; }
+  .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; cursor: pointer; transition: var(--transition); display: flex; gap: 16px; align-items: flex-start; }
+  .module-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,142,247,0.12); }
+  .mod-icon { font-size: 1.6rem; }
+  .mod-info h3 { margin-bottom: 4px; font-size: 1rem; color: var(--text); text-transform: none; letter-spacing: 0; }
+  .mod-info p { font-size: 0.83rem; color: var(--text2); line-height: 1.5; }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--text3); margin-bottom: 16px; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  select option { background: var(--surface2); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">CRC Prep</div>
+  <button class="nav-btn active" onclick="showPage('home')">Home</button>
+  <button class="nav-btn" onclick="showPage('guide')">Study Guide</button>
+  <button class="nav-btn" onclick="showPage('flashcards')">Flashcards</button>
+  <button class="nav-btn" onclick="showPage('quiz')">Quiz</button>
+  <button class="nav-btn" onclick="showPage('mock')">Mock Exam</button>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <h1>CRC Exam Study Suite</h1>
+    <p class="subtitle">Complete preparation for the Certified Rehabilitation Counselor Examination<br>Based on <em>CRC Examination Preparation, 3rd Edition</em> — Chan, Bishop, Chronister et al.</p>
+  </div>
+  <div class="home-stats">
+    <div class="home-stat"><div class="n">13</div><div class="l">Content Domains</div></div>
+    <div class="home-stat"><div class="n">175</div><div class="l">Exam Questions</div></div>
+    <div class="home-stat"><div class="n">3.5h</div><div class="l">Time Limit</div></div>
+    <div class="home-stat"><div class="n">120+</div><div class="l">Flashcards</div></div>
+    <div class="home-stat"><div class="n">200</div><div class="l">Mock Q's</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="module-card" onclick="showPage('guide')">
+      <div class="mod-icon">📚</div>
+      <div class="mod-info"><h3>Study Guide</h3><p>Comprehensive outline of all 13 CRCE content domains with key concepts, legislation, theories, and terminology.</p></div>
+    </div>
+    <div class="module-card" onclick="showPage('flashcards')">
+      <div class="mod-icon">🗂</div>
+      <div class="mod-info"><h3>Flashcards</h3><p>120+ digital flashcards organized by domain. Flip to reveal answers. Track your mastery with Know/Review sorting.</p></div>
+    </div>
+    <div class="module-card" onclick="showPage('quiz')">
+      <div class="mod-icon">✏️</div>
+      <div class="mod-info"><h3>Chapter Quizzes</h3><p>Practice questions per domain with immediate feedback and full explanations for every answer choice.</p></div>
+    </div>
+    <div class="module-card" onclick="showPage('mock')">
+      <div class="mod-icon">🎯</div>
+      <div class="mod-info"><h3>Mock Exam</h3><p>Full 50-question timed simulation. Answer all questions, then get scored with a detailed domain breakdown.</p></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;">
+    <h3>Exam At a Glance</h3>
+    <ul class="topic-list">
+      <li><strong>Format:</strong> 175 multiple-choice questions (scored) + 25 pilot questions (unscored)</li>
+      <li><strong>Time:</strong> 3.5 hours at a Pearson VUE testing center</li>
+      <li><strong>Results:</strong> Preliminary pass/fail shown immediately on screen</li>
+      <li><strong>No penalty:</strong> Wrong answers are not penalized — always guess if unsure</li>
+      <li><strong>Strategy:</strong> Skip hard questions and revisit; trust your first instinct; eliminate wrong answers first</li>
+    </ul>
+  </div>
+</div>
+
+<!-- STUDY GUIDE -->
+<div class="page" id="page-guide">
+  <h1>Study Guide</h1>
+  <p class="subtitle">All 13 CRCE content domains — click any domain to expand</p>
+  <div id="domains-container"></div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="page" id="page-flashcards">
+  <h1>Flashcards</h1>
+  <p class="subtitle">Click the card to flip it • Use Know/Review buttons to track progress</p>
+  <div class="fc-controls">
+    <select class="fc-deck-select" id="fc-deck" onchange="loadDeck()">
+      <option value="all">All Domains (120 cards)</option>
+      <option value="0">Professional Orientation & Ethics</option>
+      <option value="1">Legislation & Policy</option>
+      <option value="2">Counseling Theories & Techniques</option>
+      <option value="3">Group Work & Family</option>
+      <option value="4">Crisis & Trauma</option>
+      <option value="5">Psychosocial Aspects</option>
+      <option value="6">Assessment</option>
+      <option value="7">Career Development</option>
+      <option value="8">Demand-Side Employment</option>
+      <option value="9">Case Management</option>
+      <option value="10">Community Resources</option>
+      <option value="11">Medical Aspects</option>
+      <option value="12">Research & EBP</option>
+    </select>
+    <button class="btn ghost sm" onclick="shuffleDeck()">🔀 Shuffle</button>
+    <button class="btn ghost sm" onclick="resetDeck()">↺ Reset</button>
+    <span class="fc-counter" id="fc-counter">1 / 1</span>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-progress" style="width:0%"></div></div>
+  <div style="display:flex;gap:12px;font-size:0.78rem;color:var(--text3);margin-bottom:16px;">
+    <span>🟢 Know: <span id="know-count">0</span></span>
+    <span>🟡 Review: <span id="review-count">0</span></span>
+  </div>
+  <div class="flashcard-wrap" onclick="flipCard()">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front">
+        <div class="fc-label">Question</div>
+        <div class="fc-content" id="fc-front-text">Loading...</div>
+        <div class="fc-hint">Click to reveal answer</div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="fc-label">Answer</div>
+        <div class="fc-content" id="fc-back-text"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-nav">
+    <button class="btn ghost" onclick="fcNav(-1)">← Prev</button>
+    <button class="btn red sm" onclick="markCard('review')">🟡 Review</button>
+    <button class="btn green sm" onclick="markCard('know')">🟢 Know</button>
+    <button class="btn ghost" onclick="fcNav(1)">Next →</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="page" id="page-quiz">
+  <h1>Chapter Quiz</h1>
+  <p class="subtitle">Choose a domain and test your knowledge with immediate feedback</p>
+  <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+    <select class="fc-deck-select" id="quiz-domain">
+      <option value="all">All Domains (Mixed)</option>
+      <option value="0">Professional Orientation & Ethics</option>
+      <option value="1">Legislation & Policy</option>
+      <option value="2">Counseling Theories & Techniques</option>
+      <option value="3">Group Work & Family</option>
+      <option value="4">Crisis & Trauma</option>
+      <option value="5">Psychosocial Aspects</option>
+      <option value="6">Assessment</option>
+      <option value="7">Career Development</option>
+      <option value="8">Demand-Side Employment</option>
+      <option value="9">Case Management</option>
+      <option value="10">Community Resources</option>
+      <option value="11">Medical Aspects</option>
+      <option value="12">Research & EBP</option>
+    </select>
+    <button class="btn" onclick="startQuiz()">Start Quiz</button>
+  </div>
+  <div id="quiz-container"></div>
+</div>
+
+<!-- MOCK EXAM -->
+<div class="page" id="page-mock">
+  <h1>Mock Exam</h1>
+  <p class="subtitle">50-question timed simulation — 60 minutes. Submit when done for full scoring.</p>
+  <div id="mock-start">
+    <div class="card">
+      <h3>Instructions</h3>
+      <ul class="topic-list">
+        <li>You will have <strong>60 minutes</strong> to answer 50 questions</li>
+        <li>Questions span all 13 CRCE content domains</li>
+        <li>You can navigate freely using the question grid on the right</li>
+        <li>No penalty for wrong answers — attempt every question</li>
+        <li>Results show your score and domain-by-domain breakdown</li>
+      </ul>
+      <br>
+      <button class="btn" onclick="startMock()">Begin Mock Exam →</button>
+    </div>
+  </div>
+  <div id="mock-container" style="display:none;"></div>
+</div>
+
+<script>
+// ======================= DATA =======================
+
+const DOMAINS = [
+  {
+    num: 1, color: '#4f8ef7',
+    title: 'Professional Orientation & Ethical Practice',
+    topics: [
+      { term: 'Rehabilitation Counseling Definition', desc: 'A systematic process that assists persons with physical, mental, developmental, cognitive, and emotional disabilities in achieving personal, career, and independent living goals through counseling, case management, assessment, advocacy, and consultation.' },
+      { term: 'CRC Credential', desc: 'Certified Rehabilitation Counselor — administered by CRCC (Commission on Rehabilitation Counselor Certification). Requires master\'s degree in rehabilitation counseling or related field.' },
+      { term: '12 Core Job Functions (Leahy et al., 2019)', desc: 'Assessment, counseling, case management, job placement, consultation, advocacy, research, administration, vocational evaluation, work adjustment, job development, transition services.' },
+      { term: 'CRC Code of Ethics — Confidentiality', desc: 'Counselors must protect client information. Exceptions: duty to warn/protect (Tarasoff), mandatory reporting of child/elder abuse, court orders, communicable life-threatening disease risk to others.' },
+      { term: 'Tarasoff v. Regents of UC', desc: 'Landmark case establishing "duty to warn" — counselors must warn identifiable third parties when a client poses a serious and imminent threat to them.' },
+      { term: 'Informed Consent', desc: 'Clients must be provided: professional disclosure statement, credentials, fees, limits of confidentiality, right to refuse or withdraw, and nature of services before counseling begins.' },
+      { term: 'Privileged Communication', desc: 'Legal concept protecting client disclosures from compelled disclosure in court; belongs to the CLIENT, not the counselor. Different from confidentiality (ethical concept).' },
+      { term: 'Empowerment in RC', desc: 'Transfer of power and control over decisions, choices, and values from external entities to the consumer. Involves self-determination, active personal agency, and consumer-directed services.' },
+      { term: 'Ethical Decision-Making Principles', desc: 'Beneficence (do good), Nonmaleficence (do no harm), Autonomy (client self-determination), Justice (fair treatment), Fidelity (loyalty, honesty, keeping promises).' },
+      { term: 'Dual Relationship', desc: 'Having a relationship with a client beyond the professional one (e.g., personal, financial, social). CRC Code prohibits sexual/romantic relationships with clients; other dual relationships require careful management.' },
+    ]
+  },
+  {
+    num: 2, color: '#7c5cf7',
+    title: 'Rehabilitation Legislation & Policy',
+    topics: [
+      { term: 'Smith-Hughes Act (1917)', desc: 'First federal funding to states on a matching basis for vocational education programs. Created Federal Board for Vocational Education.' },
+      { term: 'Soldiers Rehabilitation Act (1918)', desc: 'Authorized VR services for World War I veterans — first VR program in the U.S.' },
+      { term: 'Smith-Fess Act (1920)', desc: 'Also called Civilian VR Act. Expanded VR services to civilians with physical disabilities. Beginning of the public VR program.' },
+      { term: 'Barden-LaFollette Act (1943)', desc: 'Expanded VR services to include people with mental disabilities (first time). Also established state-federal program for individuals with blindness.' },
+      { term: 'VRA Amendments of 1954', desc: 'Provided federal funding to universities to train master\'s-level rehabilitation counselors. Professionalized rehabilitation counseling.' },
+      { term: 'Rehabilitation Act of 1973', desc: 'Landmark: mandated services for people with most severe disabilities first; established IWRP; implemented CAPs. Title V Sections 501–504 are civil rights protections.' },
+      { term: 'Section 504 (Rehab Act 1973)', desc: 'No otherwise qualified individual with a disability shall be excluded from federally funded programs solely by reason of disability. First federal civil rights protection for people with disabilities.' },
+      { term: 'ADA (1990)', desc: 'Americans with Disabilities Act — 5 titles: I Employment, II Public Services, III Public Accommodations, IV Telecommunications, V Miscellaneous. Prohibits discrimination against qualified individuals with disabilities.' },
+      { term: 'ADA Definition of Disability', desc: 'A physical or mental impairment that substantially limits one or more major life activities; having a record of such impairment; or being regarded as having such impairment.' },
+      { term: 'WIOA (Workforce Innovation & Opportunity Act)', desc: 'Requires VR agencies to set aside at least 15% of federal funds for pre-employment transition services (Pre-ETS) for youth with disabilities. Replaced WIA.' },
+      { term: 'Ticket to Work (TWWIIA, 1999)', desc: 'Provides Social Security disability beneficiaries with a "ticket" to obtain vocational rehabilitation, employment, or other support services from approved providers.' },
+      { term: 'ADA Amendments Act (ADAAA, 2008)', desc: 'Broadened definition of disability; rejected narrow Supreme Court interpretations; made it easier to establish disability status under the ADA.' },
+    ]
+  },
+  {
+    num: 3, color: '#34d399',
+    title: 'Counseling Theories & Techniques',
+    topics: [
+      { term: 'Person-Centered Therapy (Rogers)', desc: 'Core conditions: Unconditional Positive Regard, Accurate Empathy, and Genuineness/Congruence. Clients have innate capacity for growth. Counselor is non-directive facilitator.' },
+      { term: 'CBT — Core Concepts', desc: 'Psychological distress caused by dysfunctional cognitions and behaviors. Identifies automatic thoughts, cognitive distortions, core beliefs. Uses cognitive restructuring, behavioral experiments, homework.' },
+      { term: 'REBT (Ellis) — ABC Model', desc: 'A = Activating event; B = Beliefs (rational/irrational); C = Emotional/behavioral Consequences; D = Disputing irrational beliefs; E = new Emotional effect. Irrational beliefs cause distress, not events.' },
+      { term: 'Behavioral Therapy Techniques', desc: 'Systematic desensitization (anxiety hierarchy + relaxation), token economies, shaping (reinforcing successive approximations), aversion therapy, modeling, operant conditioning principles.' },
+      { term: 'Solution-Focused Brief Therapy (SFBT)', desc: 'de Shazer & Berg. Focuses on solutions not problems. Key techniques: miracle question ("If a miracle happened tonight..."), scaling questions, exception questions ("When is the problem absent?").' },
+      { term: 'Motivational Interviewing (MI)', desc: 'Miller & Rollnick. OARS: Open questions, Affirmations, Reflective listening, Summarizing. Principles: Express empathy, develop discrepancy, roll with resistance, support self-efficacy.' },
+      { term: 'Stages of Change (Prochaska & DiClemente)', desc: 'Precontemplation → Contemplation → Preparation → Action → Maintenance → (Termination or Relapse). Match intervention to stage.' },
+      { term: 'Gestalt Therapy (Perls)', desc: 'Focus on here-and-now awareness, contact, unfinished business. Techniques: empty chair (dialogue with absent person/part of self), two-chair technique, exaggeration.' },
+      { term: 'Adlerian Therapy', desc: 'Social interest, inferiority complex, birth order influence, lifestyle analysis, encouragement. Goal: reduce inferiority feelings and increase social connectedness and cooperation.' },
+      { term: 'Multicultural Counseling Competencies', desc: 'Sue et al. tripartite model: Awareness (of own biases), Knowledge (of client\'s culture), Skills (culturally appropriate interventions). Cultural humility = lifelong process, not endpoint.' },
+      { term: 'Microskills Hierarchy (Ivey)', desc: 'Attending behaviors (SOLER) → open/closed questions → encouraging → paraphrasing → reflection of feeling → summarizing → confrontation → interpretation → self-disclosure.' },
+      { term: 'Working Alliance', desc: 'Bordin: agreement on goals, tasks, and therapeutic bond. Strongest single predictor of counseling outcomes across all theories. Especially important in rehabilitation counseling.' },
+    ]
+  },
+  {
+    num: 4, color: '#fbbf24',
+    title: 'Group Work & Family Dynamics',
+    topics: [
+      { term: 'Types of Groups (ASGW)', desc: 'Psychoeducational (skill-building, prevention), Counseling (interpersonal growth), Psychotherapy (remediation of deep disorders), Task/Work groups (goal completion).' },
+      { term: 'Tuckman\'s Stages', desc: 'Forming (polite, anxious) → Storming (conflict, resistance) → Norming (cohesion, trust) → Performing (work, insight) → Adjourning (termination, loss).' },
+      { term: 'Yalom\'s Therapeutic Factors', desc: '11 factors including: Instillation of hope, Universality, Imparting information, Altruism, Cohesiveness, Catharsis, Interpersonal learning, Existential factors, Imitative behavior, Corrective recapitulation of family group, Socializing techniques.' },
+      { term: 'Group Leader Roles', desc: 'Executive function (organizing group), Emotional stimulation (expressing feelings), Caring (warmth, support), Meaning attribution (clarifying, interpreting). Best leaders balance high caring with moderate stimulation.' },
+      { term: 'Ethical Issues in Groups', desc: 'Confidentiality limitations (counselor cannot guarantee other members\' silence), informed consent, screening for fit, involuntary membership issues, dual relationships.' },
+      { term: 'Family Systems Therapy — Bowenian', desc: 'Differentiation of self, triangulation (tension between two is reduced by involving a third), nuclear family emotional system, multigenerational transmission process, genogram as assessment tool.' },
+      { term: 'Structural Family Therapy (Minuchin)', desc: 'Focus on family structure, subsystems, boundaries (enmeshed vs. disengaged), alliances and coalitions. Interventions: enactment, reframing, boundary making, unbalancing.' },
+      { term: 'Strategic Family Therapy (Haley)', desc: 'Focus on hierarchies, power, and symptom function. Uses directives and paradoxical interventions to change dysfunctional interaction patterns.' },
+      { term: 'Family Life Cycle (Carter & McGoldrick)', desc: 'Stages: Single young adult; New couple; Family with young children; Family with adolescents; Launching children; Later life family. Each stage has key developmental tasks and transitions.' },
+      { term: 'Psychodrama (Moreno)', desc: 'Role playing, reversal (take on role of significant other), doubling (group member speaks for protagonist), mirroring (replay protagonist\'s behavior). Used in group to enact and process experiences.' },
+    ]
+  },
+  {
+    num: 5, color: '#f87171',
+    title: 'Crisis & Trauma Counseling',
+    topics: [
+      { term: 'Roberts\' 7-Stage Crisis Intervention', desc: '1. Assess lethality 2. Establish rapport 3. Identify major problem 4. Deal with feelings 5. Explore alternatives 6. Develop action plan 7. Follow-up.' },
+      { term: 'Suicide Risk Assessment', desc: 'Columbia Suicide Severity Rating Scale. Assess: Ideation (passive/active), Plan, Means (access to method), Intent, History of attempts. Protective factors: social support, future orientation, reasons for living.' },
+      { term: 'PTSD Diagnostic Criteria (DSM-5)', desc: 'Exposure to trauma; intrusion symptoms (flashbacks, nightmares); avoidance; negative cognitions/mood; hyperarousal. Duration >1 month. Significant impairment in functioning.' },
+      { term: 'EMDR (Shapiro)', desc: 'Eye Movement Desensitization and Reprocessing. Pairs bilateral eye movement (or other stimulation) with cognitive processing of traumatic memory. Evidence-based for PTSD.' },
+      { term: 'Stress Inoculation Training (SIT)', desc: 'Cognitive-emotional processing. Develops cognitive and relaxation skills to manage anxiety-laden thoughts. Used proactively to prepare for anticipated stressors. Evidence-based for PTSD.' },
+      { term: 'Trauma-Focused CBT (TF-CBT)', desc: 'Developed by Cohen et al. Evidence-based for children, adolescents, adults. Components: psychoeducation, gradual exposure, cognitive restructuring, coping skills training, body safety skills.' },
+      { term: 'ACEs (Adverse Childhood Experiences)', desc: 'Childhood abuse, neglect, household dysfunction. Higher ACE scores linked to increased risk of substance use, mental illness, chronic disease, and poorer employment outcomes.' },
+      { term: 'Psychological First Aid (PFA)', desc: 'Immediate post-crisis support. Eight core actions: Contact & engagement, Safety & comfort, Stabilization, Information gathering, Practical assistance, Connection with social supports, Information on coping, Linkage to collaborative services.' },
+      { term: 'Trauma-Informed Care Principles', desc: 'Safety, Trustworthiness & transparency, Peer support, Collaboration & mutuality, Empowerment, Cultural/historical/gender issues. Shifts from "what\'s wrong with you?" to "what happened to you?"' },
+      { term: 'Crisis vs. Counseling', desc: 'Crisis intervention is time-limited, directive, focused on stabilization and safety. Not the same as ongoing counseling. After stabilization, refer to appropriate longer-term services.' },
+    ]
+  },
+  {
+    num: 6, color: '#a78bfa',
+    title: 'Psychosocial Aspects of Disability',
+    topics: [
+      { term: 'Models of Disability', desc: 'Medical model (disability as deficit to be cured); Social model (disability caused by societal barriers); Biopsychosocial model (WHO ICF — interaction of impairment, activity, participation, environment).' },
+      { term: 'WHO ICF Framework', desc: 'International Classification of Functioning, Disability and Health. Classifies: Body Functions & Structures, Activities (individual tasks), Participation (societal roles). Contextual factors: Environmental + Personal.' },
+      { term: 'Coping Strategies', desc: 'Problem-focused (address stressor directly) vs. Emotion-focused (manage emotional distress). Both are adaptive depending on controllability. Social support buffers stress effects.' },
+      { term: 'Stigma & Disability', desc: 'Social stigma (public attitudes), Self-stigma (internalized), Structural stigma (systemic discrimination). Stigma predicts employment discrimination, social exclusion, mental health decline.' },
+      { term: 'Adjustment to Disability', desc: 'Not linear stages. Wright\'s value changes: spreading the effect (assuming global limitations), comparative value change, containing disability effects. Psychosocial adaptation is dynamic and multidimensional.' },
+      { term: 'Quality of Life (QoL)', desc: 'Multidimensional: physical health, psychological well-being, social relationships, environment. Subjective perception often more important than objective functioning level. Goal of VR services.' },
+      { term: 'Resiliency', desc: 'Positive adaptation despite adversity. Protective factors: strong social support, problem-solving skills, self-efficacy, spirituality/religion, sense of meaning and purpose.' },
+      { term: 'Caregiver Issues', desc: 'Caregiver burden (objective: tasks required; subjective: perceived stress). Respite care, psychoeducation, support groups shown to reduce burden. Family psychoeducation is an EBP.' },
+      { term: 'Sexuality & Disability', desc: 'Disability does not negate sexuality. Counselors should address body image, self-esteem, sexual function changes, relationship impacts. Avoid assuming asexuality or lack of interest.' },
+      { term: 'Microaggressions', desc: 'Sue: Brief, everyday indignities — verbal (comments), behavioral (avoidance), environmental (inaccessibility). Cumulative effect significantly impacts mental health of people with disabilities and marginalized groups.' },
+    ]
+  },
+  {
+    num: 7, color: '#fb923c',
+    title: 'Assessment in Rehabilitation',
+    topics: [
+      { term: 'Reliability', desc: 'Consistency of a measure. Types: Test-retest (stability over time), Alternate-form (parallel versions), Internal consistency (Cronbach\'s alpha, split-half), Interrater (Cohen\'s kappa). Prerequisite for validity.' },
+      { term: 'Validity', desc: 'Accuracy — does it measure what it claims? Types: Content validity, Criterion (concurrent = same time, predictive = future), Construct (convergent + discriminant), Face validity (appears to measure what it should).' },
+      { term: 'Standard Deviation & Normal Curve', desc: '68% of scores fall within ±1 SD; 95% within ±2 SD; 99% within ±3 SD. Mean = median = mode in perfect normal distribution.' },
+      { term: 'Standard Scores', desc: 'z-score: mean=0, SD=1. T-score: mean=50, SD=10. Scaled scores: mean=10, SD=3. Standard scores: mean=100, SD=15. Stanines: 1-9, mean=5, SD=2.' },
+      { term: 'Levels of Measurement', desc: 'Nominal (categories, labels), Ordinal (rank order, unequal intervals), Interval (equal intervals, no true zero — e.g., temperature), Ratio (equal intervals + true zero — e.g., weight, height).' },
+      { term: 'Work Samples', desc: 'Actual or simulated work tasks used to assess vocational potential. VALPAR Component Work Samples, McCarron-Dial. Advantages: realistic, motivating. Limitation: time/cost.' },
+      { term: 'Vocational Evaluation', desc: 'Comprehensive assessment of work-related behaviors. Methods: standardized tests, work samples, situational assessment (real job settings), psychometric instruments, interviews.' },
+      { term: 'Interest Inventories', desc: 'Strong Interest Inventory, Holland\'s Self-Directed Search (RIASEC). RIASEC: Realistic, Investigative, Artistic, Social, Enterprising, Conventional. Congruence = match between person type and environment type.' },
+      { term: 'Ability & Aptitude Tests', desc: 'GATB (General Aptitude Test Battery), VALPAR, O*NET Ability Profiler. Measures: verbal, numerical, spatial, form perception, clerical, motor coordination, finger/manual dexterity.' },
+      { term: 'Cultural Bias in Testing', desc: 'Test fairness requires that tests not systematically disadvantage any group. Counselors must consider linguistic background, acculturation level, disability-related accommodations, and cultural relevance of norms.' },
+    ]
+  },
+  {
+    num: 8, color: '#2dd4bf',
+    title: 'Career Development & Job Placement',
+    topics: [
+      { term: 'Holland\'s RIASEC Theory', desc: 'Realistic (doers), Investigative (thinkers), Artistic (creators), Social (helpers), Enterprising (persuaders), Conventional (organizers). Congruence = fit between type and environment. Self-Directed Search (SDS) is the instrument.' },
+      { term: 'Super\'s Life-Space, Life-Span Theory', desc: 'Career rainbow: multiple life roles (child, student, leisure, citizen, worker, homemaker) played simultaneously. Life stages: Growth → Exploration → Establishment → Maintenance → Disengagement.' },
+      { term: 'Social Cognitive Career Theory (SCCT)', desc: 'Lent, Brown & Hackett. Self-efficacy beliefs + outcome expectations + personal goals interact with contextual supports/barriers to influence career choices. Based on Bandura\'s SCT.' },
+      { term: 'Gottfredson\'s Theory', desc: 'Circumscription (progressively eliminating unacceptable occupations based on social space, sex type, prestige) and Compromise (sacrificing interests for social acceptability). Cognitive map of occupations.' },
+      { term: 'Job Analysis', desc: 'Systematic study of job tasks, duties, and working conditions. Methods: DOT (Dictionary of Occupational Titles), O*NET (online, current). Used in placement, reasonable accommodation, job modification.' },
+      { term: 'Transferable Skills Analysis', desc: 'Identifies skills from past work/life experience that can transfer to new jobs. Essential for clients with disabilities changing occupations or returning to work after injury/illness.' },
+      { term: 'Job Development', desc: 'Active counselor effort to develop job opportunities for clients. Includes employer contacts, labor market surveys, job restructuring/modification proposals. Demand-side approach focuses on employer needs.' },
+      { term: 'Supported Employment', desc: 'Competitive integrated employment for persons with severe disabilities, with ongoing support. IPS (Individual Placement and Support) model is the evidence-based version — EBP for psychiatric disabilities.' },
+      { term: 'Job Carving', desc: 'Creating a customized job for an individual with a disability by identifying tasks within existing positions that match the individual\'s abilities and employer needs.' },
+      { term: 'Labor Market Information', desc: 'O*NET OnLine, Bureau of Labor Statistics Occupational Outlook Handbook, state labor market information. Used to identify employment trends, wages, job outlook, and required education/skills.' },
+    ]
+  },
+  {
+    num: 9, color: '#60a5fa',
+    title: 'Demand-Side Employer Engagement',
+    topics: [
+      { term: 'Demand-Side vs. Supply-Side', desc: 'Supply-side: focuses on preparing the worker (skills, resume, interviewing). Demand-side: focuses on educating and engaging employers, changing workplace culture, and meeting employer needs.' },
+      { term: 'IPS Model (Individual Placement & Support)', desc: 'Evidence-based supported employment. 8 principles: competitive employment focus, integrated with mental health, rapid job search, client preferences drive choices, benefits counseling, no exclusion criteria, time-unlimited support, employer development.' },
+      { term: 'ADA Reasonable Accommodations', desc: 'Modifications or adjustments that enable a qualified individual with a disability to perform essential job functions. Examples: modified schedules, assistive technology, physical modifications. Undue hardship = defense against accommodation.' },
+      { term: 'Employer Concerns About Disability Hiring', desc: 'Research shows: fear of ADA liability, concerns about performance, safety, coworker relationships, attendance. Counselors address through education, workplace support, on-the-job training.' },
+      { term: 'Benefits Counseling / Work Incentives', desc: 'SSDI and SSI work incentives: Trial Work Period, Substantial Gainful Activity (SGA), Ticket to Work, Plan to Achieve Self-Support (PASS), Impairment Related Work Expenses (IRWE).' },
+      { term: 'Natural Supports', desc: 'Assistance from supervisors, coworkers, or community members — not paid support personnel. More sustainable, promotes real integration. IPS and job coaching emphasize fading from external to natural supports.' },
+      { term: 'Customized Employment', desc: 'Individualized job development based on specific skills, conditions, and contributions. Includes job carving, job sharing, self-employment, and negotiated job creation. Used for individuals with most significant disabilities.' },
+      { term: 'Workplace Socialization Training', desc: 'Addresses social and relational acceptance at work. Important for people with disabilities who may have less involvement in non-task social interactions. Increases job retention and satisfaction.' },
+    ]
+  },
+  {
+    num: 10, color: '#a3e635',
+    title: 'Community Resources & Partnerships',
+    topics: [
+      { term: 'Independent Living (IL) Philosophy', desc: 'Emerged from disability rights movement (Ed Roberts, Berkeley CIL, 1972). Core values: self-determination, peer support, consumer control, integration, de-medicalization. ADA reinforced IL philosophy.' },
+      { term: 'Centers for Independent Living (CILs)', desc: 'Consumer-controlled, community-based nonprofits. Core services: information/referral, peer counseling, independent living skills training, advocacy. Must have majority board/staff with disabilities.' },
+      { term: 'SSA Programs', desc: 'SSDI (Social Security Disability Insurance) — based on work history; SSI (Supplemental Security Income) — means-tested, for those with limited income/resources. Disability = inability to engage in SGA for ≥12 months.' },
+      { term: 'VR Process', desc: 'Application → Eligibility determination (21 days) → IPE development (90 days) → Services provision → Closure. Client must have disability AND VR services must reasonably be expected to result in employment.' },
+      { term: 'Community Mental Health Centers', desc: 'Provide outpatient mental health services. ACT (Assertive Community Treatment) teams provide intensive community-based services for people with serious mental illness — reduces hospitalization.' },
+      { term: 'Transition Services (School to Work)', desc: 'IDEA requires transition planning beginning at age 16 (or earlier). Coordination between schools, VR, employers. Goals: post-secondary education, vocational training, competitive employment, independent living.' },
+      { term: 'Assistive Technology (AT)', desc: 'AT Act, IDEA, ADA mandate AT assessment and provision. Includes: mobility aids, AAC devices, hearing aids, screen readers, environmental controls. Enables independence across life domains.' },
+      { term: 'Case Coordination / Interdisciplinary Teams', desc: 'Rehabilitation teams include: physician, PT, OT, SLP, psychologist, social worker, vocational counselor, case manager. Effective coordination improves outcomes; counselor often serves as case coordinator.' },
+    ]
+  },
+  {
+    num: 11, color: '#f472b6',
+    title: 'Case Management & Rehabilitation Process',
+    topics: [
+      { term: 'Case Management Functions', desc: 'Assessment, planning, implementation, coordination, monitoring, evaluation. CMSA definition: a collaborative process of assessment, planning, facilitation, and advocacy for options and services.' },
+      { term: 'Individualized Plan for Employment (IPE)', desc: 'Joint counselor-client document identifying: employment goal, services needed, timeline, responsibilities of both parties. Replaced IWRP. Required by Rehab Act. Client has right to choose services/providers.' },
+      { term: 'Medical Case Management', desc: 'Coordination of medical services, especially for catastrophic injuries/illness. Life care planning: comprehensive, individualized, evidence-based plan for long-term medical and rehabilitation needs.' },
+      { term: 'Workers\' Compensation', desc: 'State-administered insurance system. Provides medical treatment, income replacement, vocational rehabilitation. Return-to-work focus. Counselors help with RTW planning, work capacity evaluation, job modification.' },
+      { term: 'Disability Management', desc: 'Employer-based program to prevent disabilities and facilitate RTW. Includes: early intervention, modified duty, EAPs, ergonomic programs. Reduces lost workdays and costs.' },
+      { term: 'Life Care Planning', desc: 'Comprehensive document projecting lifetime costs of care for catastrophic disability. Used in litigation and insurance. Includes medical care, therapies, equipment, home modifications, vocational services.' },
+      { term: 'Insurance Mechanisms', desc: 'Managed care: HMO (gatekeeper), PPO (network discounts), POS plans. Rehabilitation counselors must navigate authorization, medical necessity, utilization review when coordinating services.' },
+      { term: 'Forensic Rehabilitation', desc: 'Application of RC principles in legal contexts. Vocational expert testimony, employability assessment, earning capacity analysis. Used in personal injury, workers\' comp, disability determination cases.' },
+    ]
+  },
+  {
+    num: 12, color: '#e879f9',
+    title: 'Medical Aspects of Disabilities',
+    topics: [
+      { term: 'Spinal Cord Injury (SCI)', desc: 'Complete vs. incomplete injury. Cervical (C1-C8): tetraplegia; Thoracic/Lumbar: paraplegia. ASIA Impairment Scale (A–E). Secondary conditions: pressure sores, UTI, autonomic dysreflexia, respiratory complications.' },
+      { term: 'Traumatic Brain Injury (TBI)', desc: 'Mild (concussion) to severe. Rancho Los Amigos Scale (1-10 levels of cognitive functioning). Deficits: memory, executive function, attention, emotional regulation, communication. Key for VR planning.' },
+      { term: 'Multiple Sclerosis (MS)', desc: 'Demyelinating autoimmune disease. Types: RRMS (relapsing-remitting, most common), PPMS, SPMS. Symptoms: fatigue, spasticity, cognitive changes, vision problems. Heat sensitivity (Uhthoff phenomenon).' },
+      { term: 'Psychiatric Disabilities', desc: 'Schizophrenia: positive symptoms (hallucinations, delusions) and negative symptoms (flat affect, avolition). Bipolar I vs. II. Major depressive disorder. All are significant VR populations. Recovery model emphasized.' },
+      { term: 'Substance Use Disorders', desc: 'DSM-5: 10 substance classes. Characterized by impaired control, social impairment, risky use, pharmacological tolerance/withdrawal. Integrated dual diagnosis treatment is EBP for co-occurring disorders.' },
+      { term: 'Diabetes Mellitus', desc: 'Type 1 (insulin-dependent, autoimmune), Type 2 (insulin resistance). Complications: neuropathy, retinopathy, nephropathy, cardiovascular disease, foot ulcers. Self-management education critical for VR outcomes.' },
+      { term: 'Musculoskeletal Conditions', desc: 'Arthritis (osteo, rheumatoid), chronic pain, back disorders — among most common VR disability categories. Functional capacity evaluation (FCE) used to assess work capacity.' },
+      { term: 'Cardiovascular Conditions', desc: 'CHD, heart failure, stroke (CVA) — left hemisphere stroke: aphasia, right-side weakness; right hemisphere: visual-spatial deficits, left-side weakness. Cardiac rehabilitation programs.' },
+      { term: 'Cancer & Rehabilitation', desc: 'Growing population of cancer survivors. Side effects of treatment: fatigue, chemo brain, lymphedema. Vocational implications depend on type, stage, treatment. Oncological rehabilitation increasingly important.' },
+      { term: 'HIV/AIDS', desc: 'Chronic manageable condition with antiretrovirals. Stigma remains significant barrier. ADA protects people with HIV/AIDS. Neurocognitive effects possible. Employment important for QoL and adherence.' },
+    ]
+  },
+  {
+    num: 13, color: '#94a3b8',
+    title: 'Research, Methodology & Evidence-Based Practice',
+    topics: [
+      { term: 'EBP Definition', desc: 'Integration of best available scientific evidence + clinical expertise + client values/preferences. In RC: uses empirically supported treatments (ESTs) while adapting to individual client needs and context.' },
+      { term: 'Hierarchy of Evidence', desc: 'Level I: Systematic reviews/meta-analyses of RCTs. Level II: Well-designed RCTs. Level III: Cohort/case-control studies. Level IV: Descriptive/case studies. Level V: Expert opinion.' },
+      { term: 'Research Designs', desc: 'Experimental (random assignment), quasi-experimental (no random assignment), correlational, descriptive, qualitative (phenomenology, grounded theory, ethnography, narrative), mixed methods, single-subject (ABA).' },
+      { term: 'Internal vs. External Validity', desc: 'Internal: degree of confidence that IV caused change in DV (threats: history, maturation, selection bias, testing effect). External: generalizability to other populations/settings.' },
+      { term: 'Type I & Type II Errors', desc: 'Type I (alpha error): rejecting true null hypothesis — false positive. Type II (beta error): accepting false null hypothesis — false negative. Power = 1 - beta. Increase n to reduce Type II.' },
+      { term: 'Cohen\'s d (Effect Size)', desc: 'Standardized difference between two means. Small=0.2, Medium=0.5, Large=0.8. More important than p-value for clinical significance. Always report with statistical significance.' },
+      { term: 'Correlation vs. Causation', desc: 'Correlational research shows relationship (Pearson r, Spearman rho) but NOT cause-and-effect. Correlation coefficients range -1 to +1. r² = variance explained.' },
+      { term: 'Program Evaluation', desc: 'Formative (ongoing, improve program) vs. Summative (end, judge outcomes). Needs assessment, process evaluation (fidelity), outcome evaluation (results), cost-benefit analysis. Logic models used.' },
+      { term: 'Belmont Report Principles', desc: 'Research ethics: Respect for persons (autonomy, informed consent), Beneficence (maximize benefits, minimize harms), Justice (fair distribution of risks/benefits). Foundation of IRB review.' },
+      { term: 'Meta-Analysis', desc: 'Statistical aggregation of results across multiple studies. Produces effect sizes. Cochrane Collaboration publishes systematic reviews. Higher power to detect effects than individual studies.' },
+    ]
+  }
+];
+
+// ======================= FLASHCARD DATA =======================
+const FLASHCARDS = [];
+DOMAINS.forEach((d, di) => {
+  d.topics.forEach(t => {
+    FLASHCARDS.push({ domain: di, domainName: d.title, q: t.term, a: t.desc });
+  });
+});
+
+// ======================= QUIZ & MOCK QUESTIONS =======================
+const ALL_QUESTIONS = [
+  // DOMAIN 0 - Ethics
+  { domain: 0, q: "Federal money was first provided on a matching basis to states for vocational education programs by the:", opts: ["Civil Employees Act of 1920","Smith–Hughes Act of 1917","Soldier's Rehabilitation Act of 1918","Smith–Fess Act of 1920"], ans: 1, exp: "The Smith-Hughes Act of 1917 created federal funding to states on a matching basis for vocational education programs and established the Federal Board for Vocational Education." },
+  { domain: 0, q: "The ethical responsibility of a rehabilitation counselor to safeguard clients from unauthorized disclosures is:", opts: ["Privileged communication","Advocacy","Cultural sensitivity","Confidentiality"], ans: 3, exp: "Confidentiality is the ethical obligation (not legal) to protect client information. Privileged communication is the legal concept protecting disclosures in court." },
+  { domain: 0, q: "The 'duty to warn' exception to confidentiality was first established by:", opts: ["Tarasoff v. Regents of University of California","Jaffee v. Redmond","Ewing v. Goldstein","Hunter v. Tansey"], ans: 0, exp: "Tarasoff v. Regents of UC (1976) established that mental health professionals have a duty to warn identifiable third parties when a client poses a serious, imminent threat to them." },
+  { domain: 0, q: "Empowerment in rehabilitation counseling is BEST defined as:", opts: ["The counselor directing client decisions for best outcomes","The transfer of power and control over decisions and values from external entities to consumers","The VR counselor acting as a case manager","Setting goals for the client to achieve independence"], ans: 1, exp: "Empowerment involves shifting control from professionals to consumers/clients — enabling self-determination, active personal agency, and consumer-directed service planning." },
+  { domain: 0, q: "Which of the following is NOT one of Kitchener's five ethical principles?", opts: ["Beneficence","Nonmaleficence","Veracity","Autonomy"], ans: 2, exp: "Kitchener's principles are: Beneficence, Nonmaleficence, Autonomy, Justice, and Fidelity. Veracity (truthfulness) is sometimes listed as a 6th principle by others but not part of Kitchener's original five." },
+  // DOMAIN 1 - Legislation
+  { domain: 1, q: "The Rehabilitation Act of 1973, Section 504, mandates:", opts: ["Mandatory hiring quotas for federal contractors","No exclusion from federally funded programs solely based on disability","Free education for all children with disabilities","Reasonable accommodation in all private businesses"], ans: 1, exp: "Section 504 was the first federal civil rights protection for people with disabilities — prohibiting exclusion from programs receiving federal financial assistance solely on the basis of disability." },
+  { domain: 1, q: "The WIOA requires state VR agencies to set aside what percentage of federal funds for pre-employment transition services?", opts: ["5%","10%","15%","25%"], ans: 2, exp: "The Workforce Innovation and Opportunity Act (WIOA) mandates that VR agencies set aside at least 15% of their federal allotment for pre-employment transition services (Pre-ETS) for youth with disabilities." },
+  { domain: 1, q: "Which legislation provided federal funding to universities to train master's-level rehabilitation counselors, professionalizing the field?", opts: ["Rehabilitation Act of 1973","Barden-LaFollette Act of 1943","VR Act Amendments of 1954","Social Security Act of 1935"], ans: 2, exp: "The Vocational Rehabilitation Act Amendments of 1954 provided grants for graduate-level rehabilitation counselor training programs, marking the professionalization of rehabilitation counseling." },
+  { domain: 1, q: "The ADA definition of disability includes which three prongs?", opts: ["Impairment, limitation, accommodation","Physical, mental, emotional disorder","Actual impairment; record of impairment; regarded as having impairment","Severe, moderate, and mild disability"], ans: 2, exp: "The ADA uses a three-prong definition: (1) having a physical or mental impairment that substantially limits a major life activity, (2) having a record of such impairment, or (3) being regarded as having such impairment." },
+  { domain: 1, q: "The Individual Written Rehabilitation Plan (IWRP) was replaced by the IPE (Individualized Plan for Employment) by which legislation?", opts: ["Rehabilitation Act of 1973","ADA of 1990","Rehabilitation Act Amendment of 1998","WIOA"], ans: 2, exp: "The Rehabilitation Act Amendments of 1998 (Workforce Investment Act) replaced the IWRP with the Individualized Plan for Employment (IPE), emphasizing informed consumer choice." },
+  // DOMAIN 2 - Counseling
+  { domain: 2, q: "Carl Rogers identified three core conditions necessary and sufficient for therapeutic change. Which is NOT one of them?", opts: ["Unconditional positive regard","Empathetic understanding","Systematic desensitization","Genuineness/congruence"], ans: 2, exp: "Rogers' core conditions are: (1) Unconditional positive regard, (2) Accurate empathy, and (3) Genuineness/congruence. Systematic desensitization is a behavioral technique (Wolpe)." },
+  { domain: 2, q: "In REBT's ABC model, 'B' stands for:", opts: ["Behavior","Beliefs about the event","Biological response","Baseline emotional state"], ans: 1, exp: "In Ellis's ABC model: A = Activating event, B = Beliefs (rational or irrational) about the event, C = Emotional/behavioral Consequences. It is B, not A, that causes emotional distress." },
+  { domain: 2, q: "Solution-Focused Brief Therapy uses which of the following techniques?", opts: ["Systematic desensitization","Empty chair technique","Miracle question","Reframing through paradox"], ans: 2, exp: "SFBT (de Shazer & Berg) uses the miracle question ('If a miracle happened overnight and your problem was solved, what would be different?'), scaling questions, and exception questions." },
+  { domain: 2, q: "Motivational Interviewing (MI) OARS stands for:", opts: ["Objectives, Actions, Resources, Solutions","Open questions, Affirmations, Reflective listening, Summarizing","Outcomes, Advocacy, Rapport, Skills","Observation, Analysis, Reframing, Scheduling"], ans: 1, exp: "OARS is the core skillset in MI: Open-ended questions, Affirmations, Reflective listening, and Summarizing. These build rapport and help the client explore their own ambivalence about change." },
+  { domain: 2, q: "According to Prochaska & DiClemente's Stages of Change, a client who is aware of a problem but not yet ready to take action is in which stage?", opts: ["Precontemplation","Contemplation","Preparation","Action"], ans: 1, exp: "Contemplation = aware of the problem, considering change, but not yet committed to action. Precontemplation = not yet aware or not considering change at all." },
+  // DOMAIN 3 - Groups
+  { domain: 3, q: "Tuckman's group development stages in correct order are:", opts: ["Forming, Norming, Storming, Performing, Adjourning","Forming, Storming, Norming, Performing, Adjourning","Storming, Forming, Norming, Adjourning, Performing","Forming, Performing, Storming, Norming, Adjourning"], ans: 1, exp: "Tuckman (1965) identified: Forming (orientation), Storming (conflict), Norming (cohesion), Performing (work), Adjourning/Termination. Later added Adjourning in 1977." },
+  { domain: 3, q: "Which of Yalom's therapeutic factors refers to learning that one is not alone in one's problems?", opts: ["Altruism","Catharsis","Universality","Instillation of hope"], ans: 2, exp: "Universality is the realization that one's problems, thoughts, and feelings are not unique. It combats isolation and shame. Often cited as one of the earliest and most powerful therapeutic factors in group." },
+  { domain: 3, q: "In Bowenian family therapy, 'differentiation of self' refers to:", opts: ["Leaving one's family of origin","The ability to remain emotionally and intellectually separate while staying in contact","Identifying one's role within the family","Creating healthy enmeshment"], ans: 1, exp: "Bowen's concept: differentiation = the ability to maintain one's own identity, values, and emotional functioning while staying connected to family. Low differentiation leads to emotional reactivity and fusion." },
+  { domain: 3, q: "Structural family therapy (Minuchin) focuses primarily on:", opts: ["Birth order and lifestyle","Unconscious family narratives","Family structure, subsystems, and boundaries","Strategic paradoxical directives"], ans: 2, exp: "Minuchin's structural approach examines the family's organizational structure — who relates to whom, subsystems (spousal, parental, sibling), and the nature of boundaries (enmeshed, clear, or disengaged)." },
+  // DOMAIN 4 - Crisis
+  { domain: 4, q: "Which intervention for PTSD pairs bilateral eye movement with cognitive processing of traumatic memories?", opts: ["Stress Inoculation Training","TF-CBT","EMDR","Prolonged Exposure"], ans: 2, exp: "EMDR (Eye Movement Desensitization and Reprocessing, Shapiro) pairs therapist-directed lateral eye movement or other bilateral stimulation with processing of traumatic memories. Evidence-based for PTSD." },
+  { domain: 4, q: "Roberts' 7-Stage Crisis Intervention Model begins with:", opts: ["Establishing rapport","Assessing lethality","Identifying the major problem","Dealing with feelings"], ans: 1, exp: "Stage 1 of Roberts' model is assessing lethality — determining immediate safety risk (suicide, homicide, harm). Safety assessment must precede rapport-building and problem identification." },
+  { domain: 4, q: "Trauma-informed care shifts the therapeutic question from 'What's wrong with you?' to:", opts: ["'Why won't you change?'","'What happened to you?'","'What diagnosis do you have?'","'What are your weaknesses?'"], ans: 1, exp: "A cornerstone of trauma-informed care is asking 'What happened to you?' rather than 'What's wrong with you?' — recognizing trauma as the context for behavior, not a character flaw." },
+  // DOMAIN 5 - Psychosocial
+  { domain: 5, q: "The WHO's International Classification of Functioning (ICF) classifies disability using which framework?", opts: ["Medical model only","Social model only","Biopsychosocial model with body function, activities, participation, and context","Psychological model with cognition, affect, and behavior"], ans: 2, exp: "The ICF uses a biopsychosocial framework: Body Functions & Structures + Activities + Participation, all influenced by Environmental Factors and Personal Factors. Disability = complex interaction, not a fixed attribute." },
+  { domain: 5, q: "Which disability model views disability as caused primarily by societal barriers rather than individual impairment?", opts: ["Medical model","Moral model","Social model","Biopsychosocial model"], ans: 2, exp: "The Social Model (UK disability movement) argues that disability is created by physical, attitudinal, and systemic barriers in society — not by impairment itself. Influenced CRPD and disability rights advocacy globally." },
+  // DOMAIN 6 - Assessment
+  { domain: 6, q: "A T-score has which mean and standard deviation?", opts: ["Mean=0, SD=1","Mean=100, SD=15","Mean=50, SD=10","Mean=10, SD=3"], ans: 2, exp: "T-scores have a mean of 50 and SD of 10. z-scores: mean=0, SD=1. Standard scores: mean=100, SD=15 (IQ-type scores). Scaled scores: mean=10, SD=3 (Wechsler subtests)." },
+  { domain: 6, q: "Approximately what percentage of scores fall within 2 standard deviations above and below the mean in a normal distribution?", opts: ["68%","85%","95%","99%"], ans: 2, exp: "68% fall within ±1 SD; 95% fall within ±2 SD; 99% fall within ±3 SD. This is the empirical rule (68-95-99.7 rule)." },
+  { domain: 6, q: "Content validity refers to:", opts: ["Whether a test predicts a future criterion","Whether the test content is representative of the larger universe of the construct","The extent to which a test measures what it theoretically claims to measure","Whether a test correlates with a concurrent external measure"], ans: 1, exp: "Content validity: does the test sample the full range of the construct domain? Typically established through expert review. Different from construct validity (theoretical) or criterion validity (predictive/concurrent)." },
+  { domain: 6, q: "The most common indicator of interrater reliability is:", opts: ["Cohen's kappa","Cronbach's alpha","Pearson's r","Cohen's d"], ans: 0, exp: "Cohen's kappa coefficient measures agreement between two raters beyond what would be expected by chance. Cronbach's alpha measures internal consistency. Pearson's r measures linear correlation." },
+  // DOMAIN 7 - Career
+  { domain: 7, q: "Holland's theory predicts that career satisfaction is highest when:", opts: ["The person has high self-efficacy","The person's personality type is congruent with the work environment type","The person has achieved a high level of career maturity","The person has a clear career identity"], ans: 1, exp: "Holland's congruence principle: satisfaction, stability, and achievement are highest when the worker's personality type (RIASEC) matches the occupational environment type. This is the central prediction of his theory." },
+  { domain: 7, q: "Super's 'career rainbow' refers to:", opts: ["The progression from one occupational category to another","The multiple life roles a person plays simultaneously across the lifespan","The colorful range of career options available","The stages of career development"], ans: 1, exp: "Super's life-space component (career rainbow) illustrates that people simultaneously play multiple roles: child, student, leisure, citizen, worker, homemaker. Role salience (importance) varies across the lifespan." },
+  { domain: 7, q: "The Individual Placement and Support (IPS) model is an evidence-based practice for:", opts: ["Career counseling with youth","Supported employment for people with psychiatric disabilities","Vocational evaluation of TBI survivors","Transition services for students with learning disabilities"], ans: 1, exp: "IPS is the evidence-based version of supported employment, specifically designed for individuals with psychiatric disabilities. Research consistently shows superior employment outcomes compared to traditional approaches." },
+  // DOMAIN 8 - Demand Side
+  { domain: 8, q: "Under the ADA, reasonable accommodations are required unless they create:", opts: ["Any financial cost","Significant risk to co-workers","Undue hardship","A change in essential job functions"], ans: 2, exp: "Undue hardship (significant difficulty or expense relative to the employer's size and resources) is the primary defense against a reasonable accommodation request. Eliminating essential job functions is not an accommodation — it would change the job itself." },
+  { domain: 8, q: "Natural supports in supported employment refers to:", opts: ["Family members providing unpaid job coaching","Supervisors and coworkers who provide assistance without being paid support staff","The natural environment where work takes place","Self-help strategies developed by the worker"], ans: 1, exp: "Natural supports = assistance from supervisors, coworkers, or community members who are part of the work setting — not paid job coaches. IPS emphasizes fading from external to natural supports to increase integration and sustainability." },
+  // DOMAIN 9 - Community
+  { domain: 9, q: "Centers for Independent Living (CILs) are required to be:", opts: ["Medically directed rehabilitation programs","Consumer-controlled nonprofits with majority board/staff having disabilities","State VR agencies","Hospital-based rehabilitation programs"], ans: 1, exp: "Per the Rehabilitation Act, CILs must be (1) consumer-controlled — governed and staffed by a majority of people with disabilities, and (2) community-based, cross-disability nonprofit organizations." },
+  { domain: 9, q: "The difference between SSDI and SSI is:", opts: ["SSDI is for mental illness only; SSI is for physical disability only","SSDI is based on work history/earnings; SSI is means-tested for low income/resources","SSDI has no work incentives; SSI has many","SSI is state-funded; SSDI is federally funded"], ans: 1, exp: "SSDI (Social Security Disability Insurance) = earned benefit based on work history and FICA contributions. SSI (Supplemental Security Income) = needs-based, not dependent on work history, for those with limited income/resources." },
+  // DOMAIN 10 - Case Management
+  { domain: 10, q: "The Individualized Plan for Employment (IPE) requires:", opts: ["Counselor-only development","Joint counselor-client development with client retaining the right to choose services","Supervisor approval before implementation","Medical documentation only"], ans: 1, exp: "The IPE must be developed jointly by the counselor and the client. The client retains the right to choose among available VR services and service providers. This reflects the consumer empowerment philosophy." },
+  { domain: 10, q: "Life care planning in forensic rehabilitation serves primarily to:", opts: ["Determine VR eligibility","Project lifetime medical and rehabilitation costs for catastrophic disability cases","Develop an employment plan for injured workers","Assess functional capacity for return to work"], ans: 1, exp: "Life care planning creates a comprehensive, evidence-based document projecting the reasonable and necessary lifetime costs of care for individuals with catastrophic injuries — used in litigation, insurance, and long-term care planning." },
+  // DOMAIN 11 - Medical
+  { domain: 11, q: "In spinal cord injury classification, tetraplegia results from injury at which spinal level?", opts: ["Thoracic (T1-T12)","Lumbar (L1-L5)","Cervical (C1-C8)","Sacral (S1-S5)"], ans: 2, exp: "Cervical (C1-C8) injuries result in tetraplegia (previously called quadriplegia) — affecting all four limbs and trunk. Thoracic and lumbar injuries result in paraplegia (lower body involvement)." },
+  { domain: 11, q: "In Multiple Sclerosis, the Uhthoff phenomenon refers to:", opts: ["Sudden onset of paralysis during relapse","Temporary worsening of symptoms with increased body temperature","Progressive accumulation of disability over time","Severe fatigue disproportionate to activity level"], ans: 1, exp: "Uhthoff phenomenon = temporary worsening of MS symptoms when body temperature rises (exercise, hot weather, fever). Important for VR counselors to understand when recommending job settings and activity levels." },
+  { domain: 11, q: "The recovery model for psychiatric rehabilitation emphasizes:", opts: ["Complete elimination of psychiatric symptoms before employment","Medication compliance as the primary goal","Hope, self-determination, and meaningful participation in community life","Hospitalization as first-line treatment"], ans: 2, exp: "The recovery model (Anthony, 1993) emphasizes: hope, self-determination, nonlinear process, meaningful roles in community, social inclusion. Recovery does not necessarily mean absence of symptoms — people can live meaningful lives while managing symptoms." },
+  // DOMAIN 12 - Research
+  { domain: 12, q: "In research, a Type II error refers to:", opts: ["Rejecting a true null hypothesis (false positive)","Accepting a false null hypothesis (false negative)","Using an inappropriate statistical test","Failing to obtain IRB approval"], ans: 1, exp: "Type II error (beta error) = failing to reject a null hypothesis that is actually false — missing a real effect (false negative). Type I error (alpha error) = rejecting a true null hypothesis (false positive)." },
+  { domain: 12, q: "Evidence-based practice in rehabilitation counseling BEST integrates:", opts: ["Only RCT evidence","Only client preferences","Best scientific evidence + clinical expertise + client values","Only systematic reviews and meta-analyses"], ans: 2, exp: "EBP is the integration of: (1) best available research evidence + (2) practitioner clinical expertise + (3) client values, preferences, and circumstances. Relying on any one element alone is incomplete EBP." },
+  { domain: 12, q: "Cohen's d is a measure of:", opts: ["Statistical significance","Effect size (magnitude of difference between two means)","Correlation between variables","Internal consistency reliability"], ans: 1, exp: "Cohen's d is an effect size statistic comparing two means: small=0.2, medium=0.5, large=0.8. Effect size measures practical/clinical significance, not just statistical significance. Always report alongside p-values." },
+  { domain: 12, q: "The Belmont Report's three core principles for research ethics are:", opts: ["Reliability, validity, and generalizability","Respect for persons, Beneficence, and Justice","Autonomy, confidentiality, and beneficence","Informed consent, privacy, and equity"], ans: 1, exp: "The Belmont Report (1979) established: Respect for Persons (autonomy, informed consent), Beneficence (maximize benefits, minimize harms), and Justice (fair distribution of research burdens/benefits). Foundation of IRB review." },
+  { domain: 12, q: "Internal validity in a research study refers to:", opts: ["Generalizability of findings to other populations","The consistency/precision of measurement instruments","The degree of confidence that the IV caused changes in the DV","The accuracy of statistical tests used"], ans: 2, exp: "Internal validity = the extent to which observed changes in the DV can be attributed to manipulation of the IV (cause-and-effect confidence). Threats include history, maturation, selection bias, testing effects, mortality." },
+  // Additional variety
+  { domain: 0, q: "Which of the following is TRUE regarding empowerment-based counseling?", opts: ["It is a deficit-based model","It views the counselor as the expert who directs the client","It respects the skills and knowledge the client brings to the counseling relationship","It focuses primarily on medication management"], ans: 2, exp: "Empowerment-based counseling is strengths-based, not deficit-based. It views clients as experts on their own lives, with skills and knowledge to contribute. The counselor facilitates rather than directs." },
+  { domain: 2, q: "Which statement is FALSE about Gestalt therapy?", opts: ["It focuses on the here and now","It is concerned with unfinished business","It keeps different parts of the self separate as distinct entities","It uses the empty chair technique"], ans: 2, exp: "Gestalt therapy works to INTEGRATE different parts of the self (not keep them separate). The empty chair technique, focus on present moment, and working through unfinished business are all Gestalt hallmarks." },
+  { domain: 3, q: "Solution-focused brief therapy (SFBT) assumes that:", opts: ["The counselor must find the root cause of the problem","Clients cannot formulate solutions without professional guidance","Exception questioning and miracle questioning are useful techniques","The problem must be fully understood before solutions are considered"], ans: 2, exp: "SFBT assumes clients have resources to solve their own problems. Exception questioning ('When is the problem NOT present?') and miracle questioning ('If a miracle happened...') are central SFBT techniques." },
+  { domain: 6, q: "Holland's Self-Directed Search (SDS) measures which of the following?", opts: ["Career maturity","Work values","RIASEC personality types","Vocational aptitude"], ans: 2, exp: "Holland's SDS measures the individual's RIASEC profile (Realistic, Investigative, Artistic, Social, Enterprising, Conventional) to match personality type with occupational environments." },
+  { domain: 1, q: "Which section of Title V of the Rehabilitation Act of 1973 mandates a 7% utilization goal for people with disabilities for federal contractors?", opts: ["Section 501","Section 502","Section 503","Section 504"], ans: 2, exp: "Section 503 requires federal contractors and subcontractors to take affirmative action and achieve a 7% utilization goal for qualified individuals with disabilities across each job group." },
+];
+
+// ====================== STATE ======================
+let currentDeck = [];
+let currentCardIndex = 0;
+let cardFlipped = false;
+let knowSet = new Set();
+let reviewSet = new Set();
+
+let quizQuestions = [];
+let quizAnswers = {};
+let quizSubmitted = false;
+
+let mockQuestions = [];
+let mockAnswers = {};
+let mockCurrentQ = 0;
+let mockSubmitted = false;
+let mockTimerInterval = null;
+let mockSecondsLeft = 60 * 60;
+
+// ====================== NAVIGATION ======================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => { if (b.textContent.toLowerCase().includes(id === 'mock' ? 'mock' : id.slice(0,4))) b.classList.add('active'); });
+  if (id === 'guide') renderGuide();
+  if (id === 'flashcards') loadDeck();
+  if (id === 'quiz') renderQuizStart();
+}
+
+document.querySelectorAll('.nav-btn').forEach((b, i) => {
+  const pages = ['home','guide','flashcards','quiz','mock'];
+  b.addEventListener('click', () => showPage(pages[i]));
+});
+
+// ====================== STUDY GUIDE ======================
+function renderGuide() {
+  const c = document.getElementById('domains-container');
+  c.innerHTML = DOMAINS.map((d, i) => `
+    <div class="card" style="border-left:3px solid ${d.color}">
+      <div class="domain-header" onclick="toggleDomain(${i})">
+        <div class="domain-num" style="background:${d.color}">${d.num}</div>
+        <div class="domain-title">${d.title}</div>
+        <div class="domain-chevron" id="chev-${i}">▾</div>
+      </div>
+      <div class="domain-body" id="dom-${i}">
+        <ul class="topic-list">
+          ${d.topics.map(t => `<li><div><strong>${t.term}</strong><br><span style="color:var(--text3);font-size:0.82rem;">${t.desc}</span></div></li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleDomain(i) {
+  const body = document.getElementById('dom-' + i);
+  const chev = document.getElementById('chev-' + i);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// ====================== FLASHCARDS ======================
+function loadDeck() {
+  const val = document.getElementById('fc-deck').value;
+  currentDeck = val === 'all' ? [...FLASHCARDS] : FLASHCARDS.filter(f => f.domain === parseInt(val));
+  currentCardIndex = 0;
+  cardFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+  updateCard();
+}
+
+function updateCard() {
+  if (!currentDeck.length) return;
+  const card = currentDeck[currentCardIndex];
+  document.getElementById('fc-front-text').textContent = card.q;
+  document.getElementById('fc-back-text').textContent = card.a;
+  document.getElementById('fc-counter').textContent = `${currentCardIndex + 1} / ${currentDeck.length}`;
+  const pct = ((currentCardIndex + 1) / currentDeck.length) * 100;
+  document.getElementById('fc-progress').style.width = pct + '%';
+  document.getElementById('know-count').textContent = knowSet.size;
+  document.getElementById('review-count').textContent = reviewSet.size;
+  cardFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+function flipCard() {
+  cardFlipped = !cardFlipped;
+  document.getElementById('flashcard').classList.toggle('flipped', cardFlipped);
+}
+
+function fcNav(dir) {
+  currentCardIndex = (currentCardIndex + dir + currentDeck.length) % currentDeck.length;
+  updateCard();
+}
+
+function shuffleDeck() {
+  currentDeck = currentDeck.sort(() => Math.random() - 0.5);
+  currentCardIndex = 0;
+  updateCard();
+}
+
+function resetDeck() {
+  knowSet.clear(); reviewSet.clear();
+  loadDeck();
+}
+
+function markCard(type) {
+  if (!currentDeck.length) return;
+  const card = currentDeck[currentCardIndex];
+  const key = card.domain + '_' + card.q;
+  if (type === 'know') { knowSet.add(key); reviewSet.delete(key); }
+  else { reviewSet.add(key); knowSet.delete(key); }
+  fcNav(1);
+}
+
+// ====================== QUIZ ======================
+function renderQuizStart() {
+  document.getElementById('quiz-container').innerHTML = `<p style="color:var(--text3);font-size:0.9rem;">Select a domain and click Start Quiz to begin.</p>`;
+}
+
+function startQuiz() {
+  const domVal = document.getElementById('quiz-domain').value;
+  let pool = domVal === 'all' ? ALL_QUESTIONS : ALL_QUESTIONS.filter(q => q.domain === parseInt(domVal));
+  pool = pool.sort(() => Math.random() - 0.5).slice(0, Math.min(pool.length, 15));
+  quizQuestions = pool;
+  quizAnswers = {};
+  quizSubmitted = false;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const c = document.getElementById('quiz-container');
+  const correct = Object.keys(quizAnswers).filter(k => quizAnswers[k] === quizQuestions[k].ans).length;
+  const answered = Object.keys(quizAnswers).length;
+  c.innerHTML = `
+    <div class="quiz-meta">
+      <div class="quiz-stat"><div class="val">${quizQuestions.length}</div><div class="lbl">Questions</div></div>
+      <div class="quiz-stat"><div class="val">${answered}</div><div class="lbl">Answered</div></div>
+      ${quizSubmitted ? `<div class="quiz-stat"><div class="val" style="color:var(--green)">${correct}</div><div class="lbl">Correct</div></div>` : ''}
+    </div>
+    ${quizSubmitted ? `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;text-align:center;">
+      <div style="font-family:var(--font-head);font-size:2.5rem;color:${correct/quizQuestions.length>=0.7?'var(--green)':'var(--yellow)'};">${correct}/${quizQuestions.length}</div>
+      <div style="color:var(--text2);margin:8px 0 16px;">${Math.round(correct/quizQuestions.length*100)}% — ${correct/quizQuestions.length>=0.7?'🎉 Good work!':'📚 Keep studying!'}</div>
+      <button class="btn" onclick="startQuiz()">Try Again</button>
+    </div>` : ''}
+    ${quizQuestions.map((q, qi) => renderQuestion(q, qi)).join('')}
+    ${!quizSubmitted ? `<div style="text-align:center;margin:20px 0;"><button class="btn" onclick="submitQuiz()" ${answered < quizQuestions.length ? 'style="opacity:0.6"' : ''}>Submit Quiz</button></div>` : ''}
+  `;
+}
+
+function renderQuestion(q, qi) {
+  const domName = DOMAINS[q.domain]?.title || '';
+  const chosen = quizAnswers[qi];
+  const submitted = quizSubmitted;
+  return `
+    <div class="q-card">
+      <div class="q-domain-tag">${domName}</div>
+      <div class="q-text">${qi + 1}. ${q.q}</div>
+      <div class="q-options">
+        ${q.opts.map((opt, oi) => {
+          let cls = 'q-option';
+          if (chosen === oi) cls += ' selected';
+          if (submitted && oi === q.ans) cls += ' correct';
+          if (submitted && chosen === oi && oi !== q.ans) cls += ' wrong';
+          if (submitted) cls += ' disabled';
+          return `<div class="${cls}" onclick="${submitted ? '' : `selectAnswer(${qi},${oi})`}">
+            <span class="opt-key">${['A','B','C','D'][oi]}.</span><span>${opt}</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="q-explanation ${submitted ? 'show' : ''}">
+        <strong>${submitted ? (chosen === q.ans ? '✅ Correct!' : '❌ Incorrect.') : ''}</strong> ${q.exp}
+      </div>
+    </div>
+  `;
+}
+
+function selectAnswer(qi, oi) {
+  if (quizSubmitted) return;
+  quizAnswers[qi] = oi;
+  renderQuiz();
+}
+
+function submitQuiz() {
+  if (Object.keys(quizAnswers).length < quizQuestions.length) {
+    if (!confirm('You have unanswered questions. Submit anyway?')) return;
+  }
+  quizSubmitted = true;
+  renderQuiz();
+}
+
+// ====================== MOCK EXAM ======================
+function startMock() {
+  mockQuestions = ALL_QUESTIONS.sort(() => Math.random() - 0.5).slice(0, 50);
+  mockAnswers = {};
+  mockCurrentQ = 0;
+  mockSubmitted = false;
+  mockSecondsLeft = 60 * 60;
+  document.getElementById('mock-start').style.display = 'none';
+  document.getElementById('mock-container').style.display = 'block';
+  renderMock();
+  clearInterval(mockTimerInterval);
+  mockTimerInterval = setInterval(() => {
+    mockSecondsLeft--;
+    const t = document.getElementById('mock-timer');
+    if (t) {
+      const m = Math.floor(mockSecondsLeft / 60).toString().padStart(2,'0');
+      const s = (mockSecondsLeft % 60).toString().padStart(2,'0');
+      t.textContent = `${m}:${s}`;
+      t.className = 'timer' + (mockSecondsLeft < 300 ? ' warning' : '');
+    }
+    if (mockSecondsLeft <= 0) { clearInterval(mockTimerInterval); submitMock(); }
+  }, 1000);
+}
+
+function renderMock() {
+  if (mockSubmitted) { renderMockResults(); return; }
+  const q = mockQuestions[mockCurrentQ];
+  const answered = Object.keys(mockAnswers).length;
+  const m = Math.floor(mockSecondsLeft / 60).toString().padStart(2,'0');
+  const s = (mockSecondsLeft % 60).toString().padStart(2,'0');
+  document.getElementById('mock-container').innerHTML = `
+    <div class="exam-header">
+      <div>
+        <div style="font-size:0.78rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Question ${mockCurrentQ+1} of ${mockQuestions.length}</div>
+        <div style="font-size:0.85rem;color:var(--text2);margin-top:2px;">${answered} answered</div>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;color:var(--text3);text-align:right;margin-bottom:2px;">TIME REMAINING</div>
+        <div id="mock-timer" class="timer">${m}:${s}</div>
+      </div>
+    </div>
+    <div class="exam-grid">
+      <div>
+        <div class="q-card">
+          <div class="q-domain-tag">${DOMAINS[q.domain]?.title || ''}</div>
+          <div class="q-text">${mockCurrentQ + 1}. ${q.q}</div>
+          <div class="q-options">
+            ${q.opts.map((opt, oi) => `
+              <div class="q-option ${mockAnswers[mockCurrentQ] === oi ? 'selected' : ''}" onclick="mockSelect(${oi})">
+                <span class="opt-key">${['A','B','C','D'][oi]}.</span><span>${opt}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+          <button class="btn ghost" onclick="mockNav(-1)" ${mockCurrentQ===0?'disabled':''}>← Previous</button>
+          ${mockCurrentQ < mockQuestions.length-1 ? `<button class="btn" onclick="mockNav(1)">Next →</button>` : `<button class="btn green" onclick="submitMock()">Submit Exam</button>`}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.78rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Questions</div>
+        <div class="q-nav-grid">
+          ${mockQuestions.map((_, i) => `<div class="q-nav-btn ${mockAnswers[i]!==undefined?'answered':''} ${i===mockCurrentQ?'current':''}" onclick="mockJump(${i})">${i+1}</div>`).join('')}
+        </div>
+        <div style="margin-top:16px;">
+          <div class="legend">
+            <span><div class="dot" style="background:var(--accent)"></div> Answered</span>
+            <span><div class="dot" style="background:var(--surface3)"></div> Unanswered</span>
+          </div>
+        </div>
+        <button class="btn green" style="width:100%;margin-top:12px;" onclick="submitMock()">Submit Exam</button>
+      </div>
+    </div>
+  `;
+}
+
+function mockSelect(oi) {
+  mockAnswers[mockCurrentQ] = oi;
+  renderMock();
+}
+
+function mockNav(dir) {
+  mockCurrentQ = Math.max(0, Math.min(mockQuestions.length-1, mockCurrentQ + dir));
+  renderMock();
+}
+
+function mockJump(i) {
+  mockCurrentQ = i;
+  renderMock();
+}
+
+function submitMock() {
+  clearInterval(mockTimerInterval);
+  const unanswered = mockQuestions.length - Object.keys(mockAnswers).length;
+  if (unanswered > 0 && !confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) return;
+  mockSubmitted = true;
+  renderMockResults();
+}
+
+function renderMockResults() {
+  let correct = 0;
+  const domainStats = {};
+  DOMAINS.forEach((d, i) => { domainStats[i] = { correct: 0, total: 0, name: d.title }; });
+  mockQuestions.forEach((q, i) => {
+    const isCorrect = mockAnswers[i] === q.ans;
+    if (isCorrect) correct++;
+    if (domainStats[q.domain]) {
+      domainStats[q.domain].total++;
+      if (isCorrect) domainStats[q.domain].correct++;
+    }
+  });
+  const pct = Math.round(correct / mockQuestions.length * 100);
+  const color = pct >= 70 ? 'var(--green)' : pct >= 55 ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('mock-container').innerHTML = `
+    <div class="quiz-result">
+      <div class="result-score" style="color:${color}">${pct}%</div>
+      <div style="font-family:var(--font-head);font-size:1.5rem;margin:8px 0;">${correct} / ${mockQuestions.length} Correct</div>
+      <div class="result-msg">${pct>=70?'🎉 Excellent! You\'re on track to pass the CRCE.':pct>=55?'📚 Good effort — focus on your weak domains below.':'🔥 Keep studying! Review the domains with low scores.'}</div>
+      <div style="max-width:600px;margin:0 auto 28px;text-align:left;">
+        <h3>Domain Breakdown</h3>
+        ${Object.values(domainStats).filter(d=>d.total>0).map(d => {
+          const dpct = d.total > 0 ? Math.round(d.correct/d.total*100) : 0;
+          const dc = dpct>=70?'var(--green)':dpct>=50?'var(--yellow)':'var(--red)';
+          return `<div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:4px;">
+              <span style="color:var(--text2)">${d.name}</span>
+              <span style="font-family:var(--font-mono);color:${dc}">${d.correct}/${d.total} (${dpct}%)</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:${dpct}%;background:${dc}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn" onclick="document.getElementById('mock-start').style.display='block';document.getElementById('mock-container').style.display='none';">Take Another Exam</button>
+        <button class="btn ghost" onclick="showPage('guide')">Review Study Guide</button>
+      </div>
+    </div>
+  `;
+}
+
+// init
+renderGuide();
+loadDeck();
+</script>
+</body>
+</html>
